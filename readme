@@ -1,0 +1,3 @@
+# mes enpoints
+http://localhost:5000/api/auth/register (inscription)
+http://localhost:5000/api/auth/          (connexion)
