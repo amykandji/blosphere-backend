@@ -4,10 +4,8 @@ require('dotenv').config();
 const blogRoutes = require('./routes/blogRoutes');
 const connectedDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-
-
-
-
+const userRoutes = require('./routes/userRoutes');
+const articleRoutes = require("./routes/articleRoutes");
 
 
 
@@ -20,10 +18,10 @@ app.use(cors());
 app.use(express.json());
 
 
-
+app.use("/api/articles", articleRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', blogRoutes);
-
 
 app.get('/', (req, res) => {
   res.send('Bienvenue sur BlogSphere 🚀');

@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
     }
 
     // Générer le token JWT
-    const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
