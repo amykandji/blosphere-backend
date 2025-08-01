@@ -7,7 +7,7 @@ const User = require("../models/Users");
 router.get("/profile", auth, async (req, res) => {
   try {
     
-    const userId = req.user.userId
+    const userId = req.user.id
     
     console.log("UserId:", userId);
 
@@ -21,6 +21,42 @@ router.get("/profile", auth, async (req, res) => {
     res.status(500).json({ msg: "Erreur serveur" });
   }
 });
+
+// ✏️ Modifier son profil (nom, email, etc.)
+router.put("/profile", auth, async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id; // gère les deux cas
+    console.log("🔄 Mise à jour pour userId :", userId);
+
+    const { name, email, password } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: "Utilisateur non trouvé" });
+
+    // Mise à jour des champs
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) {
+      const bcrypt = require("bcryptjs");
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    const updated = await user.save();
+
+    res.status(200).json({
+      msg: "✅ Profil mis à jour avec succès",
+      user: {
+        id: updated._id,
+        name: updated.name,
+        email: updated.email
+      }
+    });
+  } catch (error) {
+    console.error("❌ Erreur update profile :", error);
+    res.status(500).json({ msg: "Erreur serveur" });
+  }
+});
+
 
 // Route de déconnexion
 router.post("/logout", auth, (req, res) => {
