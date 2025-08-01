@@ -13,6 +13,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const article = await Article.findById(req.params.id).populate("author", "name");
   if (!article) return res.status(404).json({ msg: "Article non trouvé" });
+
+  // ⬆️ Incrémenter les vues
+    article.views += 1;
+    await article.save();
   res.json(article);
 });
 
@@ -72,6 +76,7 @@ router.delete("/:id", auth, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) return res.status(404).json({ msg: "Article non trouvé" });
+    
 
     if (!article.author) {
       return res.status(400).json({ msg: "Auteur manquant dans cet article" });
@@ -88,6 +93,33 @@ router.delete("/:id", auth, async (req, res) => {
     res.status(500).json({ msg: "Erreur serveur", error: err.message });
   }
 });
+
+// ❤️ Like / Dislike un article
+router.post("/:id/like", auth, async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return res.status(404).json({ msg: "Article non trouvé" });
+
+    const userId = req.user.id;
+
+    const hasLiked = article.likes.includes(userId);
+
+    if (hasLiked) {
+      // ❌ Retirer le like
+      article.likes.pull(userId);
+      await article.save();
+      return res.json({ msg: "Dislike retiré", likes: article.likes.length });
+    } else {
+      // ❤️ Ajouter un like
+      article.likes.push(userId);
+      await article.save();
+      return res.json({ msg: "Like ajouté", likes: article.likes.length });
+    }
+  } catch (err) {
+    res.status(500).json({ msg: "Erreur serveur", error: err.message });
+  }
+});
+
 
 
 module.exports = router;

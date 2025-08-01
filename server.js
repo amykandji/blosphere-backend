@@ -6,6 +6,7 @@ const connectedDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const articleRoutes = require("./routes/articleRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 
 
@@ -17,7 +18,7 @@ connectedDB();
 app.use(cors());
 app.use(express.json());
 
-
+app.use("/api/comments", commentRoutes);
 app.use("/api/articles", articleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
