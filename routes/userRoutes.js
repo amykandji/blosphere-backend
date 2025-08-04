@@ -63,6 +63,30 @@ router.post("/logout", auth, (req, res) => {
   res.status(200).json({ msg: "Déconnecté avec succès ✅" });
 });
 
+// 🔧 Modifier son profil : bio et avatar
+router.put("/me", auth, async (req, res) => {
+  try {
+    const updates = {
+      bio: req.body.bio,
+      avatar: req.body.avatar
+    };
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: updates },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      msg: "Profil mis à jour ✅",
+      user
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erreur serveur", detail: error.message });
+  }
+});
+ 
+
 
 
 module.exports = router;

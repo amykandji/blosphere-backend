@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // ou 'bcrypt' si tu préfères
+const bcrypt = require('bcryptjs'); // ou 'bcrypt'
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -15,12 +15,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   role: {
     type: String,
     enum: ['admin', 'author', 'reader'],
     default: 'reader',
+  },
+
+  // 📝 Bio de l'utilisateur
+  bio: {
+    type: String,
+    default: "Nouvel utilisateur sur BlogSphere"
+  },
+
+  // 🖼️ Avatar de l'utilisateur (URL)
+  avatar: {
+    type: String,
+    default: "https://ui-avatars.com/api/?name=User&background=random"
   }
-});
+
+}, { timestamps: true });
 
 // 🔐 Hachage du mot de passe avant enregistrement
 userSchema.pre("save", async function (next) {
@@ -34,7 +48,5 @@ userSchema.pre("save", async function (next) {
     next(err);
   }
 });
-
-
 
 module.exports = mongoose.model('User', userSchema);
